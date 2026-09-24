@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#111827" />
+<link rel="manifest" href="manifest.webmanifest" />
+<title>Daily Standard</title>
+<style>
+:root{--bg:#f5f7fb;--card:#fff;--ink:#111827;--muted:#667085;--line:#e5e7eb;--accent:#1f6feb;--good:#17803d;--warn:#b7791f;--bad:#b42318}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+.wrap{max-width:900px;margin:auto;padding:16px 16px 96px}.top{display:flex;gap:12px;align-items:center;justify-content:space-between;margin:4px 0 18px}.brand{font-weight:850;font-size:24px}.sub{color:var(--muted);font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin:12px 0;box-shadow:0 1px 2px #00000008}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.stat{padding:12px;border:1px solid var(--line);border-radius:14px}.stat b{display:block;font-size:22px}.stat span{font-size:12px;color:var(--muted)}
+.row{display:flex;align-items:center;gap:10px}.between{justify-content:space-between}.habit{display:grid;grid-template-columns:44px 1fr auto;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}.habit:last-child{border-bottom:0}.check{width:38px;height:38px;border:2px solid #cbd5e1;border-radius:12px;background:white;font-size:22px}.check.on{background:#e8f5ec;border-color:#54a86a}.habit small{display:block;color:var(--muted);margin-top:3px}.pill{font-size:12px;padding:5px 8px;border-radius:999px;background:#eef2f7;color:#475467}
+button,input,textarea,select{font:inherit}.btn{border:0;border-radius:12px;padding:10px 13px;background:#111827;color:#fff;font-weight:700}.btn.secondary{background:#eef2f7;color:#111827}.btn.danger{background:#fee4e2;color:#912018}.date{padding:8px;border:1px solid var(--line);border-radius:10px;background:white}.progress{height:12px;border-radius:99px;background:#e5e7eb;overflow:hidden}.bar{height:100%;background:var(--good)}
+textarea,input[type=text],input[type=number]{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;background:white}.photo{max-width:100%;max-height:320px;border-radius:12px;display:block;margin-top:10px}.hidden{display:none!important}
+.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.day{aspect-ratio:1;border-radius:7px;background:#e5e7eb;display:flex;align-items:center;justify-content:center;font-size:10px;color:#344054}.g1{background:#fee4e2}.g2{background:#fef0c7}.g3{background:#d1fadf}.g4{background:#75e0a7}.g5{background:#17803d;color:white}
+.tabs{position:fixed;bottom:0;left:0;right:0;background:#ffffffee;backdrop-filter:blur(10px);border-top:1px solid var(--line);display:flex;justify-content:center;z-index:10}.tabs button{flex:1;max-width:220px;border:0;background:transparent;padding:14px 8px;font-weight:700;color:#667085}.tabs button.active{color:#111827}
+.section{display:none}.section.active{display:block}.gradeA{color:var(--good)}.gradeB{color:#2770b8}.gradeC{color:var(--warn)}.gradeD,.gradeF{color:var(--bad)}
+@media(max-width:650px){.grid{grid-template-columns:repeat(2,1fr)}.wrap{padding:12px 12px 88px}.brand{font-size:21px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><div><div class="brand">Daily Standard</div><div class="sub">Consistency over perfection.</div></div><select id="profileSelect" class="date"></select></div>
+
+  <section id="today" class="section active">
+    <div class="card"><div class="row between"><div><b id="dateLabel"></b><div class="sub" id="dayLabel"></div></div><input id="datePick" class="date" type="date" /></div></div>
+    <div class="grid">
+      <div class="stat"><b id="todayScore">0%</b><span>Today</span></div>
+      <div class="stat"><b id="allGrade">—</b><span>All-time grade</span></div>
+      <div class="stat"><b id="streak">0</b><span>Perfect streak</span></div>
+      <div class="stat"><b id="daysLogged">0</b><span>Days logged</span></div>
+    </div>
+    <div class="card"><div class="row between"><b>Today's Standard</b><span class="pill" id="points">0 / 0</span></div><div class="progress" style="margin-top:12px"><div id="todayBar" class="bar" style="width:0%"></div></div><div id="habitList"></div></div>
+    <div class="card"><b>Progress Photo</b><div class="sub">Stored in this browser/device in this first version. Photos use device storage, not the score database.</div><input id="photoInput" type="file" accept="image/*" capture="user" style="margin-top:12px"/><img id="photoPreview" class="photo hidden"/><button id="removePhoto" class="btn danger hidden" style="margin-top:10px">Remove photo</button></div>
+    <div class="card"><b>Daily Journal</b><div class="sub">Workout, Bible passage, wins, misses, or anything worth remembering.</div><textarea id="journal" rows="6" placeholder="What did today look like?"></textarea></div>
+  </section>
+
+  <section id="progress" class="section">
+    <div class="card"><b>Scorecard</b><div class="grid" style="margin-top:12px"><div class="stat"><b id="pAll">0%</b><span>All time</span></div><div class="stat"><b id="p7">0%</b><span>Last 7 days</span></div><div class="stat"><b id="p30">0%</b><span>Last 30 days</span></div><div class="stat"><b id="pLongest">0</b><span>Longest perfect streak</span></div></div></div>
+    <div class="card"><div class="row between"><b>Calendar</b><input id="monthPick" class="date" type="month"/></div><div id="calendar" class="calendar" style="margin-top:14px"></div></div>
+    <div class="card"><b>Habit Averages</b><div id="habitAverages" style="margin-top:10px"></div></div>
+  </section>
+
+  <section id="settings" class="section">
+    <div class="card"><b>Profiles</b><div class="sub">Create a separate setup for you or your wife on this device.</div><div class="row" style="margin-top:12px"><input id="newProfile" type="text" placeholder="Profile name"/><button id="addProfile" class="btn">Add</button></div></div>
+    <div class="card"><div class="row between"><div><b>Habits</b><div class="sub">Each active habit is worth one point.</div></div><button id="addHabit" class="btn secondary">+ Habit</button></div><div id="habitSettings"></div></div>
+    <div class="card"><b>Backup & Restore</b><div class="sub">Export periodically so photos and journal data are not only on this device.</div><div class="row" style="margin-top:12px;flex-wrap:wrap"><button id="exportBtn" class="btn">Export backup</button><label class="btn secondary">Import backup<input id="importInput" type="file" accept="application/json" class="hidden"></label></div></div>
+    <div class="card"><b>About scoring</b><p class="sub">Your daily score is completed habits ÷ active habits. The all-time grade is total completed points ÷ total possible points across logged days. Missing a habit lowers the average; it never resets your history.</p><p class="sub"><b>A</b> 90–100 · <b>B</b> 80–89.9 · <b>C</b> 70–79.9 · <b>D</b> 60–69.9 · <b>F</b> below 60</p></div>
+  </section>
+</div>
+<nav class="tabs"><button data-tab="today" class="active">Today</button><button data-tab="progress">Progress</button><button data-tab="settings">Settings</button></nav>
+<script>
+const DEFAULT_HABITS=[
+ {id:'diet',name:'Follow diet',detail:'Stay within the diet standard you set.'},
+ {id:'clean',name:'No nicotine / no cheat meals',detail:'A clean day.'},
+ {id:'outdoor',name:'Outdoor workout — 45 min',detail:'Walk, run, hike, hunt, or other qualifying outdoor training.'},
+ {id:'indoor',name:'Second workout — 45 min',detail:'Indoor 45 min OR qualifying 90-min combined workout with outdoor portion.'},
+ {id:'water',name:'Drink 1 gallon water',detail:'128 oz total.'},
+ {id:'photo',name:'Take progress photo',detail:'Daily visual record.'},
+ {id:'bible',name:'Read Bible — 15 min',detail:'Reading time, not just a verse-of-the-day.'}
+];
+const DB='daily-standard-v1'; let state=JSON.parse(localStorage.getItem(DB)||'null')||{profiles:{Justin:{habits:DEFAULT_HABITS,days:{}}},active:'Justin'};
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+function save(){localStorage.setItem(DB,JSON.stringify(state))}
+let photoDB;
+function openPhotoDB(){return new Promise((resolve,reject)=>{let q=indexedDB.open('daily-standard-photos',1);q.onupgradeneeded=()=>q.result.createObjectStore('photos');q.onsuccess=()=>{photoDB=q.result;resolve(photoDB)};q.onerror=()=>reject(q.error)})}
+function photoKey(d){return state.active+'|'+d}
+async function putPhoto(d,data){if(!photoDB)await openPhotoDB();return new Promise((res,rej)=>{let tx=photoDB.transaction('photos','readwrite');tx.objectStore('photos').put(data,photoKey(d));tx.oncomplete=res;tx.onerror=()=>rej(tx.error)})}
+async function getPhoto(d){if(!photoDB)await openPhotoDB();return new Promise((res,rej)=>{let q=photoDB.transaction('photos').objectStore('photos').get(photoKey(d));q.onsuccess=()=>res(q.result||null);q.onerror=()=>rej(q.error)})}
+async function delPhoto(d){if(!photoDB)await openPhotoDB();return new Promise((res,rej)=>{let tx=photoDB.transaction('photos','readwrite');tx.objectStore('photos').delete(photoKey(d));tx.oncomplete=res;tx.onerror=()=>rej(tx.error)})}
+function prof(){return state.profiles[state.active]}
+function iso(d=new Date()){let x=new Date(d.getTime()-d.getTimezoneOffset()*60000);return x.toISOString().slice(0,10)}
+function dayData(d){prof().days[d] ||= {done:{},journal:''}; return prof().days[d]}
+function pctDay(d){let h=prof().habits, x=prof().days[d]; if(!x) return null; let n=h.length; return n?100*h.filter(a=>x.done?.[a.id]).length/n:0}
+function grade(p){return p>=90?'A':p>=80?'B':p>=70?'C':p>=60?'D':'F'}
+function loggedDates(){return Object.keys(prof().days).sort()}
+function avg(days){let arr=days.map(pctDay).filter(x=>x!==null); return arr.length?arr.reduce((a,b)=>a+b,0)/arr.length:0}
+function perfectStreak(longest=false){let dates=loggedDates(); if(!dates.length)return 0; let set=new Set(dates.filter(d=>pctDay(d)===100)); if(longest){let best=0,cur=0,prev=null; dates.forEach(d=>{let dd=new Date(d+'T12:00:00'); if(set.has(d) && (!prev || (dd-prev)/86400000===1)) cur++; else if(set.has(d)) cur=1; else cur=0; best=Math.max(best,cur); prev=dd}); return best}
+ let cur=0,d=new Date(); while(set.has(iso(d))){cur++;d.setDate(d.getDate()-1)} return cur}
+function renderProfiles(){let sel=$('#profileSelect');sel.innerHTML='';Object.keys(state.profiles).forEach(n=>{let o=document.createElement('option');o.value=n;o.textContent=n;o.selected=n===state.active;sel.append(o)})}
+function renderToday(){let d=$('#datePick').value||iso();$('#datePick').value=d;let dt=new Date(d+'T12:00:00');$('#dateLabel').textContent=dt.toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'});let dates=loggedDates();let first=dates[0]||d;let num=Math.floor((dt-new Date(first+'T12:00:00'))/86400000)+1;$('#dayLabel').textContent='Lifestyle day '+Math.max(1,num);let x=dayData(d), h=prof().habits;let list=$('#habitList');list.innerHTML='';h.forEach(a=>{let el=document.createElement('div');el.className='habit';el.innerHTML=`<button class="check ${x.done[a.id]?'on':''}" data-id="${a.id}">${x.done[a.id]?'✓':''}</button><div><b>${a.name}</b><small>${a.detail||''}</small></div><span class="pill">1 pt</span>`;list.append(el)});$$('.check').forEach(b=>b.onclick=()=>{x.done[b.dataset.id]=!x.done[b.dataset.id]; if(b.dataset.id==='photo' && !x.done.photo){} save();renderToday();renderProgress()});
+ let p=pctDay(d)||0,c=h.filter(a=>x.done[a.id]).length;$('#todayScore').textContent=Math.round(p)+'%';$('#points').textContent=`${c} / ${h.length}`;$('#todayBar').style.width=p+'%';let all=avg(loggedDates());$('#allGrade').textContent=loggedDates().length?`${all.toFixed(1)}% ${grade(all)}`:'—';$('#allGrade').className='grade'+grade(all);$('#streak').textContent=perfectStreak();$('#daysLogged').textContent=loggedDates().length;$('#journal').value=x.journal||''; getPhoto(d).then(ph=>{if(ph){$('#photoPreview').src=ph;$('#photoPreview').classList.remove('hidden');$('#removePhoto').classList.remove('hidden')}else{$('#photoPreview').classList.add('hidden');$('#removePhoto').classList.add('hidden')}})}
+function renderProgress(){let dates=loggedDates(), all=avg(dates);$('#pAll').textContent=all.toFixed(1)+'% '+grade(all);let now=new Date();let last=n=>dates.filter(d=>(now-new Date(d+'T12:00:00'))/86400000<n);$('#p7').textContent=avg(last(7)).toFixed(1)+'%';$('#p30').textContent=avg(last(30)).toFixed(1)+'%';$('#pLongest').textContent=perfectStreak(true);let m=$('#monthPick').value||iso().slice(0,7);$('#monthPick').value=m;let [y,mo]=m.split('-').map(Number), first=new Date(y,mo-1,1), count=new Date(y,mo,0).getDate(),cal=$('#calendar');cal.innerHTML='';for(let i=0;i<first.getDay();i++){cal.append(document.createElement('div'))}for(let n=1;n<=count;n++){let d=`${y}-${String(mo).padStart(2,'0')}-${String(n).padStart(2,'0')}`,p=pctDay(d),el=document.createElement('div');el.className='day '+(p===null?'':p===100?'g5':p>=90?'g4':p>=75?'g3':p>=50?'g2':'g1');el.textContent=n;el.title=p===null?'Not logged':p.toFixed(0)+'%';el.onclick=()=>{$('#datePick').value=d;showTab('today');renderToday()};cal.append(el)}let box=$('#habitAverages');box.innerHTML='';prof().habits.forEach(h=>{let possible=dates.length,done=dates.filter(d=>prof().days[d]?.done?.[h.id]).length,p=possible?100*done/possible:0;let r=document.createElement('div');r.style.margin='12px 0';r.innerHTML=`<div class="row between"><span>${h.name}</span><b>${p.toFixed(1)}%</b></div><div class="progress"><div class="bar" style="width:${p}%"></div></div>`;box.append(r)})}
+function renderSettings(){let box=$('#habitSettings');box.innerHTML='';prof().habits.forEach((h,i)=>{let r=document.createElement('div');r.className='habit';r.innerHTML=`<span class="pill">${i+1}</span><div><input data-i="${i}" class="habitName" value="${h.name.replaceAll('"','&quot;')}"><input data-i="${i}" class="habitDetail" style="margin-top:6px" value="${(h.detail||'').replaceAll('"','&quot;')}" placeholder="Description / rule"></div><button class="btn danger delHabit" data-i="${i}">×</button>`;box.append(r)});$$('.habitName').forEach(e=>e.onchange=()=>{prof().habits[e.dataset.i].name=e.value;save();renderToday()});$$('.habitDetail').forEach(e=>e.onchange=()=>{prof().habits[e.dataset.i].detail=e.value;save();renderToday()});$$('.delHabit').forEach(e=>e.onclick=()=>{if(confirm('Remove this habit from future scoring?')){prof().habits.splice(e.dataset.i,1);save();renderSettings();renderToday();renderProgress()}})}
+function showTab(id){$$('.section').forEach(s=>s.classList.toggle('active',s.id===id));$$('.tabs button').forEach(b=>b.classList.toggle('active',b.dataset.tab===id));if(id==='progress')renderProgress();if(id==='settings')renderSettings()}
+$$('.tabs button').forEach(b=>b.onclick=()=>showTab(b.dataset.tab));$('#datePick').onchange=renderToday;$('#monthPick').onchange=renderProgress;$('#journal').oninput=e=>{dayData($('#datePick').value).journal=e.target.value;save()};$('#profileSelect').onchange=e=>{state.active=e.target.value;save();renderProfiles();renderToday();renderProgress()};
+$('#addProfile').onclick=()=>{let n=$('#newProfile').value.trim();if(!n||state.profiles[n])return alert('Enter a unique profile name.');state.profiles[n]={habits:JSON.parse(JSON.stringify(DEFAULT_HABITS)),days:{}};state.active=n;$('#newProfile').value='';save();renderProfiles();renderToday();renderSettings();renderProgress()};
+$('#addHabit').onclick=()=>{let id='h'+Date.now();prof().habits.push({id,name:'New habit',detail:''});save();renderSettings();renderToday()};
+$('#photoInput').onchange=e=>{let f=e.target.files[0];if(!f)return;let rd=new FileReader();rd.onload=()=>{let im=new Image();im.onload=async()=>{let max=1200,scale=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*scale);c.height=Math.round(im.height*scale);c.getContext('2d').drawImage(im,0,0,c.width,c.height);let data=c.toDataURL('image/jpeg',0.72),d=$('#datePick').value;await putPhoto(d,data);let x=dayData(d);x.done.photo=true;save();renderToday();renderProgress()};im.src=rd.result};rd.readAsDataURL(f)};$('#removePhoto').onclick=async()=>{let d=$('#datePick').value,x=dayData(d);await delPhoto(d);x.done.photo=false;save();renderToday();renderProgress()};
+$('#exportBtn').onclick=()=>{let blob=new Blob([JSON.stringify(state)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='daily-standard-backup-'+iso()+'.json';a.click();URL.revokeObjectURL(a.href)};$('#importInput').onchange=e=>{let f=e.target.files[0];if(!f)return;let rd=new FileReader();rd.onload=()=>{try{state=JSON.parse(rd.result);save();location.reload()}catch{alert('That backup file could not be read.')}};rd.readAsText(f)};
+openPhotoDB().catch(()=>{});renderProfiles();$('#datePick').value=iso();$('#monthPick').value=iso().slice(0,7);renderToday();renderProgress();if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body></html>
